@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050608">
+<title>PMWeatherCM1 — Атмосфера нового поколения</title>
+
+<style>
+:root {
+  --bg: #030407;
+  --text: #f5efe7;
+  --muted: #aaa9a5;
+  --gold: #e7ae6e;
+  --blue: #79c9ed;
+  --line: rgba(237, 216, 187, .18);
+  --panel: rgba(11, 15, 23, .76);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  color: var(--text);
+  background: var(--bg);
+  font-family: "Trebuchet MS", sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+a {
+  color: inherit;
+}
+
+#cosmos,
+#weather {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#cosmos {
+  z-index: -3;
+}
+
+#weather {
+  z-index: 8;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 0 25%, rgba(0,0,0,.18) 55%, #020307 100%),
+    linear-gradient(180deg, transparent, rgba(1,3,8,.8));
+}
+
+header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 5vw;
+}
+
+.brand {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: bold;
+  letter-spacing: -.04em;
+}
+
+.brand span {
+  color: var(--gold);
+}
+
+nav {
+  display: flex;
+  gap: 26px;
+  font-size: 13px;
+}
+
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: var(--text);
+}
+
+.hero {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 130px 6vw 80px;
+  text-align: center;
+}
+
+.hero-inner {
+  width: min(1050px, 100%);
+}
+
+.kicker {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3 {
+  font-family: Georgia, serif;
+  font-weight: normal;
+}
+
+h1 {
+  margin: 30px 0;
+  font-size: clamp(46px, 10vw, 145px);
+  line-height: .92;
+  letter-spacing: -.07em;
+  text-shadow: 0 5px 60px #000;
+}
+
+h1 em {
+  display: block;
+  color: #e8bc91;
+  font-size: .62em;
+}
+
+.lead {
+  max-width: 680px;
+  margin: 28px auto;
+  color: #d6d0c7;
+  font-size: clamp(16px, 2vw, 22px);
+  line-height: 1.8;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  padding: 14px 23px;
+  color: var(--text);
+  background: rgba(15, 16, 17, .75);
+  text-decoration: none;
+  transition: .3s ease;
+  cursor: pointer;
+}
+
+.button:hover {
+  border-color: var(--gold);
+  background: #38291d;
+  transform: translateY(-3px);
+}
+
+.scroll-note {
+  margin-top: 70px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .3em;
+}
+
+.story {
+  min-height: 82svh;
+  display: grid;
+  place-items: center;
+  padding: 120px 7vw;
+  text-align: center;
+}
+
+.story-inner {
+  width: min(950px, 100%);
+}
+
+h2 {
+  margin: 24px 0;
+  font-size: clamp(39px, 6.5vw, 88px);
+  line-height: 1.04;
+  letter-spacing: -.055em;
+}
+
+.story p:not(.kicker),
+.project-card p,
+.thanks-inner > p {
+  color: var(--muted);
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.9;
+}
+
+.rule,
+.thanks-line {
+  width: 70px;
+  height: 1px;
+  margin: 38px auto;
+  background: var(--gold);
+}
+
+.reveal {
+  opacity: 1;
+}
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(45px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.js .reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Информация о моде */
+
+.project-section {
+  padding: 100px 7vw;
+  background:
+    linear-gradient(180deg, transparent, rgba(7, 12, 18, .9), transparent);
+}
+
+.project-inner {
+  width: min(1050px, 100%);
+  margin: auto;
+}
+
+.project-inner > .kicker,
+.project-inner > h2 {
+  text-align: center;
+}
+
+.project-intro {
+  max-width: 780px;
+  margin: 30px auto 70px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 20px;
+  line-height: 1.9;
+}
+
+.project-card {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 25px;
+  padding: 36px 0;
+  border-top: 1px solid var(--line);
+}
+
+.chapter {
+  color: var(--gold);
+  font: italic 35px Georgia, serif;
+}
+
+.project-card h3 {
+  margin: 0 0 16px;
+  font-size: 31px;
+}
+
+.project-card p {
+  margin: 12px 0;
+  font-size: 17px;
+}
+
+.note {
+  margin-top: 30px;
+  padding: 22px 25px;
+  border-left: 2px solid var(--gold);
+  color: var(--muted);
+  background: rgba(201, 147, 82, .08);
+  line-height: 1.8;
+}
+
+.note a {
+  color: var(--gold);
+}
+
+/* Благодарность */
+
+.thanks-section {
+  min-height: 75svh;
+  display: grid;
+  place-items: center;
+  padding: 120px 7vw;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at center, rgba(177, 116, 58, .16), transparent 60%);
+}
+
+.thanks-inner {
+  max-width: 900px;
+}
+
+.thanks-inner > p {
+  max-width: 740px;
+  margin: 25px auto;
+}
+
+.thanks-line {
+  margin: 38px auto;
+}
+
+/* Солнечная система */
+
+.solar-section {
+  padding: 100px 0 30px;
+  overflow: hidden;
+  text-align: center;
+  background: linear-gradient(transparent, #030509 32%);
+}
+
+.solar-heading {
+  padding: 0 6vw;
+}
+
+.solar-heading p:last-child {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.space {
+  position: relative;
+  height: 590px;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 50% 60%, #17355525, transparent 65%),
+    radial-gradient(circle at 25% 30%, #fff 0 1px, transparent 2px),
+    radial-gradient(circle at 73% 65%, #fff 0 1px, transparent 2px);
+  background-size: auto, 173px 137px, 251px 199px;
+}
+
+.solar-world {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.orbit {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: var(--w);
+  height: var(--h);
+  border: 1px solid rgba(148, 183, 208, .12);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(-12deg);
+}
+
+.sun {
+  position: absolute;
+  left: 14%;
+  top: 44%;
+  width: 110px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #fffbd3, #ffc75b 35%, #f17915 72%);
+  box-shadow: 0 0 45px #ffb6328c, 0 0 130px #f8832344;
+}
+
+.planet {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--s);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 28% 28%, var(--c), #080b11 85%);
+  box-shadow: inset -5px -3px 8px #0009;
+}
+
+.planet::after {
+  content: attr(data-name);
+  position: absolute;
+  top: calc(100% + 17px);
+  left: 50%;
+  color: #989da5;
+  font-size: 10px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.earth {
+  position: absolute;
+  left: 42%;
+  top: 42%;
+  z-index: 3;
+  width: 94px;
+  height: 94px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #12496b;
+  box-shadow: 0 0 5px #9cdfff, 0 0 30px #4698e45c;
+  cursor: pointer;
+}
+
+.earth svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.earth::after {
+  content: "ЗЕМЛЯ ↗";
+  position: absolute;
+  top: calc(100% + 23px);
+  left: 50%;
+  color: white;
+  font-size: 11px;
+  letter-spacing: .15em;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.earth:hover {
+  box-shadow: 0 0 8px #cff5ff, 0 0 55px #4698e4aa;
+}
+
+.saturn::before {
+  content: "";
+  position: absolute;
+  inset: 25% -45%;
+  border: 6px solid #b9a27b66;
+  border-radius: 50%;
+  transform: rotate(-25deg);
+}
+
+.solar-footer {
+  padding: 25px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Галерея */
+
+dialog {
+  width: min(1150px, 94vw);
+  max-height: 90svh;
+  overflow: auto;
+  padding: clamp(22px, 4vw, 55px);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 100% 0, #23333f55, transparent 60%),
+    #0a0c10;
+  box-shadow: 0 30px 160px #000;
+}
+
+dialog::backdrop {
+  background: #010409dd;
+  backdrop-filter: blur(12px);
+}
+
+dialog[open] {
+  animation: dialog-in .55s both;
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--text);
+  background: transparent;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  margin: 28px 0;
+}
+
+.gallery figure {
+  margin: 0;
+}
+
+.gallery img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  transition: filter .35s, transform .35s;
+}
+
+.gallery img:hover {
+  filter: brightness(1.2);
+  transform: scale(1.02);
+}
+
+.gallery figcaption {
+  padding: 10px 2px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.art-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--gold);
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+/* Панель погоды */
+
+.weather-toggle {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 25;
+}
+
+.weather-panel {
+  position: fixed;
+  right: 22px;
+  bottom: 85px;
+  z-index: 25;
+  width: min(315px, calc(100vw - 32px));
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #101113ed;
+  box-shadow: 0 20px 80px #0008;
+  backdrop-filter: blur(18px);
+}
+
+.weather-panel h3 {
+  margin: 0 0 10px;
+  font-size: 21px;
+}
+
+.small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.control {
+  display: block;
+  margin-top: 19px;
+  font-size: 13px;
+}
+
+.control span {
+  display: flex;
+  justify-content: space-between;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--gold);
+}
+
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 18px 0;
+}
+
+.check input {
+  accent-color: var(--gold);
+}
+
+.presets {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.presets button {
+  flex: 1;
+  padding: 10px 5px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text);
+  background: transparent;
+  cursor: pointer;
+}
+
+.presets button:hover {
+  border-color: var(--gold);
+}
+
+/* Музыка */
+
+.music-dock {
+  position: fixed;
+  left: 22px;
+  bottom: 22px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: #101113ed;
+  box-shadow: 0 10px 45px #0005;
+  backdrop-filter: blur(18px);
+}
+
+.music-dock button {
+  border: 0;
+  color: var(--text);
+  background: transparent;
+  cursor: pointer;
+}
+
+.music-dock input {
+  width: 65px;
+  accent-color: var(--gold);
+}
+
+.music-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6b6d6c;
+}
+
+.music-dock.playing .music-indicator {
+  background: var(--gold);
+  box-shadow: 0 0 15px #e8af7066;
+}
+
+@media (max-width: 700px) {
+  header {
+    padding: 22px 5vw;
+  }
+
+  nav {
+    gap: 14px;
+    font-size: 12px;
+  }
+
+  .space {
+    height: 430px;
+  }
+
+  .sun {
+    left: 5%;
+    width: 67px;
+  }
+
+  .earth {
+    left: 40%;
+    width: 65px;
+    height: 65px;
+  }
+
+  .project-card {
+    grid-template-columns: 38px 1fr;
+    gap: 12px;
+  }
+
+  .project-card h3 {
+    font-size: 25px;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .weather-toggle {
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .weather-panel {
+    right: 16px;
+    bottom: 76px;
+  }
+
+  .music-dock {
+    left: 12px;
+    bottom: 16px;
+    padding: 9px 12px;
+  }
+
+  .music-dock input {
+    width: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="cosmos"></canvas>
+<canvas id="weather"></canvas>
+
+<header>
+  <a class="brand" href="#top">PM<span>Weather</span>CM1</a>
+
+  <nav>
+    <a href="#about">О проекте</a>
+    <a href="#details">Описание</a>
+    <a href="#solar">Галерея</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="kicker">PMWeatherCM1 / Atmospheric project</p>
+
+      <h1>
+        Внутри
+        <em>стихии.</em>
+      </h1>
+
+      <p class="lead">
+        Погодный мод, превращающий небо, облачность, дождь,
+        молнии и атмосферные изменения в важную часть игрового мира.
+      </p>
+
+      <a class="button" href="#about">
+        Начать погружение ↓
+      </a>
+
+      <p class="scroll-note">
+        ЛИСТАЙ ВНИЗ · ИССЛЕДУЙ АТМОСФЕРУ
+      </p>
+    </div>
+  </section>
+
+  <section class="story" id="about">
+    <div class="story-inner reveal">
+      <p class="kicker">01 / PMWeatherCM1</p>
+
+      <h2>
+        Не просто дождь.<br>
+        Целая атмосфера.
+      </h2>
+
+      <div class="rule"></div>
+
+      <p>
+        PMWeatherCM1 посвящён созданию атмосферных погодных сценариев,
+        в которых изменения неба становятся частью общего настроения игры.
+      </p>
+
+      <p>
+        Облачность может усиливаться постепенно, дождь появляется
+        плавно, а свет и цвет окружающей сцены меняются вместе
+        с развитием погодной системы.
+      </p>
+    </div>
+  </section>
+
+  <section class="story">
+    <div class="story-inner reveal">
+      <p class="kicker">02 / Живая погода</p>
+
+      <h2>
+        Сначала ветер.<br>
+        Потом — дождь.
+      </h2>
+
+      <p>
+        На этой странице можно самостоятельно менять визуальную силу
+        дождя, облаков, ветра и молний. Управление является демонстрацией
+        интерфейса сайта и не изменяет файлы самого мода.
+      </p>
+
+      <button class="button" id="open-weather">
+        Управлять погодой ↗
+      </button>
+    </div>
+  </section>
+
+  <section class="project-section" id="details">
+    <div class="project-inner reveal">
+      <p class="kicker">03 / Подробности</p>
+
+      <h2>
+        Что такое<br>
+        PMWeatherCM1?
+      </h2>
+
+      <p class="project-intro">
+        PMWeatherCM1 — проект, связанный с атмосферными погодными
+        сценариями и визуализацией сложных погодных процессов.
+        Он задуман как система, где погода ощущается не статичным
+        эффектом, а развивающимся событием.
+      </p>
+
+      <article class="project-card">
+        <span class="chapter">01</span>
+
+        <div>
+          <h3>Главная идея</h3>
+
+          <p>
+            Основная идея проекта — сделать погоду заметной частью
+            игрового пространства. Облака, дождь, ветер, электрические
+            разряды и изменение освещения должны создавать ощущение
+            настоящей атмосферной системы.
+          </p>
+
+          <p>
+            Игрок не просто видит заранее включённую анимацию:
+            визуальное настроение может постепенно меняться от спокойного
+            состояния к сильной грозе и затем снова ослабевать.
+          </p>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <span class="chapter">02</span>
+
+        <div>
+          <h3>Связь с CM1</h3>
+
+          <p>
+            Название CM1 относится к численному моделированию
+            атмосферных процессов. В подобных системах используются
+            расчётные данные о движении воздуха, температуре, влажности,
+            осадках и других параметрах.
+          </p>
+
+          <p>
+            Важно понимать: игровой мод и полноценная научная модель —
+            не одно и то же. Мод использует идею и данные атмосферной
+            симуляции для создания игрового опыта, а не заменяет
+            профессиональную систему прогноза погоды.
+          </p>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <span class="chapter">03</span>
+
+        <div>
+          <h3>Как создаётся атмосфера</h3>
+
+          <p>
+            Для визуальной части можно использовать отдельные слои:
+            облачные объёмы, частицы дождя, вспышки молний,
+            туман, изменение цвета неба и движение воздушных потоков.
+          </p>
+
+          <p>
+            Если погодные данные подготовлены заранее, они могут
+            проигрываться в игре как последовательность сценариев.
+            Такой подход позволяет сделать штормы разнообразными,
+            а не повторять одну и ту же анимацию.
+          </p>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <span class="chapter">04</span>
+
+        <div>
+          <h3>Кто создал проект</h3>
+
+          <p>
+            На сайте не указывается неподтверждённая биография автора,
+            команда или точные сроки разработки. Информацию об авторе,
+            версии и лицензии лучше проверять на официальной странице
+            проекта и в его репозитории.
+          </p>
+
+          <p>
+            Эта страница является неофициальной презентацией
+            PMWeatherCM1 и создана как визуальное посвящение моду.
+          </p>
+        </div>
+      </article>
+
+      <div class="note">
+        PMWeatherCM1 — атмосферный проект, а этот сайт является
+        фанатской презентационной страницей. Иллюстрации в галерее
+        создаются браузером и не являются настоящими скриншотами мода.
+      </div>
+    </div>
+  </section>
+
+  <section class="story">
+    <div class="story-inner reveal">
+      <p class="kicker">04 / Галерея</p>
+
+      <h2>
+        От космоса<br>
+        к Земле.
+      </h2>
+
+      <p>
+        Внизу страницы находится небольшая Солнечная система.
+        Нажми на Землю, чтобы камера плавно приблизилась
+        и открыла галерею PMWeatherCM1.
+      </p>
+
+      <a class="button" href="#solar">
+        К Солнечной системе ↓
+      </a>
+    </div>
+  </section>
+
+  <section class="thanks-section" id="thanks">
+    <div class="thanks-inner reveal">
+      <p class="kicker">05 / Благодарность</p>
+
+      <h2>
+        Спасибо за<br>
+        такую атмосферу.
+      </h2>
+
+      <div class="thanks-line"></div>
+
+      <p>
+        Спасибо создателям PMWeatherCM1 за идею сделать погодные явления
+        важной частью игрового мира. Благодаря таким проектам небо
+        перестаёт быть просто фоном и начинает создавать настроение,
+        напряжение и ощущение настоящего живого пространства.
+      </p>
+
+      <p>
+        Эта страница создана как неофициальное визуальное посвящение
+        проекту, его атмосфере и всем людям, которые занимаются
+        разработкой погодных систем и атмосферных модификаций.
+      </p>
+    </div>
+  </section>
+
+  <section class="solar-section" id="solar">
+    <div class="solar-heading reveal">
+      <p class="kicker">06 / Выбери свой мир</p>
+
+      <h2>
+        Следующая остановка — Земля.
+      </h2>
+
+      <p>
+        Нажми на голубую планету, чтобы открыть галерею.
+      </p>
+    </div>
+
+    <div class="space" id="space">
+      <div class="solar-world" id="solar-world">
+
+        <div class="orbit" style="--w:36%;--h:140px"></div>
+        <div class="orbit" style="--w:62%;--h:260px"></div>
+        <div class="orbit" style="--w:92%;--h:390px"></div>
+
+        <div class="sun"></div>
+
+        <div class="planet"
+             data-name="Меркурий"
+             style="--x:25%;--y:59%;--s:13px;--c:#bcb1a0"></div>
+
+        <div class="planet"
+             data-name="Венера"
+             style="--x:33%;--y:37%;--s:24px;--c:#e9bf80"></div>
+
+        <button class="earth" id="earth" aria-label="Открыть галерею">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="ocean">
+                <stop stop-color="#65bdd3"/>
+                <stop offset=".45" stop-color="#1d6791"/>
+                <stop offset="1" stop-color="#09253e"/>
+              </radialGradient>
+
+              <radialGradient id="shade">
+                <stop offset=".35" stop-color="#000" stop-opacity="0"/>
+                <stop offset=".75" stop-color="#000" stop-opacity=".25"/>
+                <stop offset="1" stop-color="#000" stop-opacity=".95"/>
+              </radialGradient>
+
+              <clipPath id="globe">
+                <circle cx="100" cy="100" r="99"/>
+              </clipPath>
+            </defs>
+
+            <g clip-path="url(#globe)">
+              <circle cx="100" cy="100" r="100" fill="url(#ocean)"/>
+
+              <g fill="#78987b">
+                <path d="M22 40 41 24 61 28 70 40 87 43 92 60 77 73 68 92 53 84 48 68 32 65Z"/>
+                <path d="M66 94 84 96 97 115 93 133 82 149 76 173 64 151 58 128Z"/>
+                <path d="M115 26 141 24 158 36 181 41 192 58 172 71 153 63 146 87 130 79 117 59 105 51Z"/>
+                <path d="M113 78 134 82 148 102 140 126 126 144 117 126 106 105Z"/>
+                <path d="M161 141 180 136 194 150 180 160 163 158Z"/>
+              </g>
+
+              <g fill="none" stroke="#fff" stroke-opacity=".52" stroke-width="7" stroke-linecap="round">
+                <path d="M5 56 Q39 36 80 53 T169 46"/>
+                <path d="M35 97 Q70 80 98 98 T177 90"/>
+                <path d="M15 136 Q60 151 102 139"/>
+                <path d="M95 166 Q146 144 198 163"/>
+              </g>
+
+              <circle cx="100" cy="100" r="100" fill="url(#shade)"/>
+            </g>
+          </svg>
+        </button>
+
+        <div class="planet"
+             data-name="Марс"
+             style="--x:55%;--y:64%;--s:20px;--c:#da805a"></div>
+
+        <div class="planet"
+             data-name="Юпитер"
+             style="--x:64%;--y:34%;--s:65px;--c:#e0c3a0"></div>
+
+        <div class="planet saturn"
+             data-name="Сатурн"
+             style="--x:76%;--y:59%;--s:45px;--c:#dbca9b"></div>
+
+        <div class="planet"
+             data-name="Уран"
+             style="--x:86%;--y:29%;--s:29px;--c:#95d9da"></div>
+
+        <div class="planet"
+             data-name="Нептун"
+             style="--x:92%;--y:72%;--s:27px;--c:#477bd7"></div>
+      </div>
+    </div>
+
+    <footer class="solar-footer">
+      PMWeatherCM1 · Художественная сцена · Масштабы планет условные
+    </footer>
+  </section>
+
+</main>
+
+<button class="button weather-toggle" id="weather-toggle">
+  ☁ Погода
+</button>
+
+<aside class="weather-panel" id="weather-panel" hidden>
+  <h3>Твоя атмосфера</h3>
+
+  <p class="small">
+    Визуальные эффекты этой страницы. Панель не управляет установленным модом.
+  </p>
+
+  <label class="control">
+    <span>Дождь <output id="rain-out">20%</output></span>
+    <input id="rain" type="range" min="0" max="100" value="20">
+  </label>
+
+  <label class="control">
+    <span>Облачность <output id="cloud-out">15%</output></span>
+    <input id="cloud" type="range" min="0" max="100" value="15">
+  </label>
+
+  <label class="control">
+    <span>Ветер <output id="wind-out">10</output></span>
+    <input id="wind" type="range" min="-100" max="100" value="10">
+  </label>
+
+  <label class="check">
+    <input id="lightning" type="checkbox">
+    Молнии
+  </label>
+
+  <div class="presets">
+    <button data-preset="clear">Ясно</button>
+    <button data-preset="rain">Дождь</button>
+    <button data-preset="storm">Шторм</button>
+  </div>
+</aside>
+
+<div class="music-dock">
+  <span class="music-indicator"></span>
+
+  <button id="music-toggle" aria-pressed="false">
+    ♫ Музыка
+  </button>
+
+  <input id="music-volume"
+         type="range"
+         min="0"
+         max="100"
+         value="30"
+         aria-label="Громкость музыки">
+</div>
+
+<dialog id="gallery-dialog">
+  <button class="close" id="close-gallery">×</button>
+
+  <p class="kicker">Прибытие / Земля</p>
+
+  <h2>Галерея PMWeatherCM1</h2>
+
+  <p class="small">
+    Ниже находятся атмосферные иллюстрации, созданные прямо браузером.
+    Это художественные изображения, а не официальные скриншоты мода.
+  </p>
+
+  <div class="gallery" id="gallery"></div>
+
+  <button class="button" id="return-space">
+    ← Вернуться в космос
+  </button>
+</dialog>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+/* Плавное появление блоков */
+
+document.documentElement.classList.add("js");
+
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: .14 });
+
+document.querySelectorAll(".reveal").forEach(item => {
+  revealObserver.observe(item);
+});
+
+/* Чёрная дыра */
+
+const cosmos = $("cosmos");
+const ctx = cosmos.getContext("2d");
+
+let width = 0;
+let height = 0;
+let deviceScale = 1;
+let stars = [];
+let diskParticles = [];
+let time = 0;
+
+function resizeCanvas() {
+  width = innerWidth;
+  height = innerHeight;
+  deviceScale = Math.min(devicePixelRatio || 1, 1.7);
+
+  cosmos.width = width * deviceScale;
+  cosmos.height = height * deviceScale;
+  ctx.setTransform(deviceScale, 0, 0, deviceScale, 0, 0);
+
+  stars = Array.from({
+    length: Math.min(650, Math.round(width * height / 2300))
+  }, () => ({
+    x: Math.random() * width,
+    y: Math.random() * height,
+    size: .3 + Math.random() * 1.3,
+    alpha: .15 + Math.random() * .75
+  }));
+}
+
+diskParticles = Array.from({ length: 2400 }, () => ({
+  radius: 1.35 + Math.random() * 4.4,
+  angle: Math.random() * Math.PI * 2,
+  size: .4 + Math.random() * 1.7,
+  heat: Math.random()
+}));
+
+resizeCanvas();
+addEventListener("resize", resizeCanvas);
+
+function drawBlackHole(animationTime) {
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = "#030407";
+  ctx.fillRect(0, 0, width, height);
+
+  for (const star of stars) {
+    ctx.globalAlpha = star.alpha;
+    ctx.fillStyle = "#dceaff";
+    ctx.fillRect(star.x, star.y, star.size, star.size);
+  }
+
+  ctx.globalAlpha = 1;
+
+  const x = width * .5;
+  const y = height * .46;
+  const radius = Math.min(width * .16, height * .19);
+
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(-.14);
+
+  const halo = ctx.createRadialGradient(
+    0, 0, radius * .5,
+    0, 0, radius * 4.6
+  );
+
+  halo.addColorStop(0, "#00000000");
+  halo.addColorStop(.25, "#de732533");
+  halo.addColorStop(.55, "#b9551718");
+  halo.addColorStop(1, "#00000000");
+
+  ctx.fillStyle = halo;
+  ctx.fillRect(-radius * 5, -radius * 5, radius * 10, radius * 10);
+
+  ctx.globalCompositeOperation = "screen";
+
+  for (const particle of diskParticles) {
+    const angle = particle.angle +
+      animationTime * .13 / Math.pow(particle.radius, 1.5);
+
+    const px = Math.cos(angle) * particle.radius * radius;
+    const py = Math.sin(angle) * particle.radius * radius * .23;
+    const intensity = .35 + .65 * (1 - Math.cos(angle)) * .5;
+
+    ctx.globalAlpha = Math.min(.9, intensity);
+    ctx.strokeStyle = particle.heat > .66
+      ? "#ffe7b0"
+      : particle.heat > .32
+        ? "#f6a45d"
+        : "#a94428";
+
+    ctx.lineWidth = particle.size;
+    ctx.beginPath();
+    ctx.ellipse(
+      0, 0,
+      particle.radius * radius,
+      particle.radius * radius * .23,
+      0,
+      angle,
+      angle + .014
+    );
+    ctx.stroke();
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = "source-over";
+
+  const shadow = ctx.createRadialGradient(
+    0, 0, radius * .76,
+    0, 0, radius * 1.08
+  );
+
+  shadow.addColorStop(0, "#000");
+  shadow.addColorStop(.87, "#000");
+  shadow.addColorStop(1, "#00000000");
+
+  ctx.fillStyle = shadow;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 1.08, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = "#ffdba66b";
+  ctx.lineWidth = 1.5;
+  ctx.shadowColor = "#ff9f50";
+  ctx.shadowBlur = 18;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 1.04, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+  ctx.restore();
+}
+
+function blackHoleLoop() {
+  if (!reducedMotion.matches) {
+    time += .016;
+  }
+
+  drawBlackHole(time);
+  requestAnimationFrame(blackHoleLoop);
+}
+
+blackHoleLoop();
+
+/* Управление погодой */
+
+const weatherCanvas = $("weather");
+const weatherCtx = weatherCanvas.getContext("2d");
+
+const weatherState = {
+  rain: 20,
+  cloud: 15,
+  wind: 10,
+  lightning: false
+};
+
+const weatherSmooth = {
+  rain: 20,
+  cloud: 15,
+  wind: 10
+};
+
+let rainDrops = [];
+let flash = 0;
+let nextLightning = 8;
+let lightningPoints = [];
+
+function resizeWeather() {
+  weatherCanvas.width = innerWidth * deviceScale;
+  weatherCanvas.height = innerHeight * deviceScale;
+  weatherCtx.setTransform(deviceScale, 0, 0, deviceScale, 0, 0);
+
+  rainDrops = Array.from({ length: 700 }, () => ({
+    x: Math.random() * innerWidth,
+    y: Math.random() * innerHeight,
+    depth: .4 + Math.random() * .6
+  }));
+}
+
+resizeWeather();
+addEventListener("resize", resizeWeather);
+
+function createLightning() {
+  let x = Math.random() * innerWidth;
+  let y = 0;
+
+  lightningPoints = [{ x, y }];
+
+  while (y < innerHeight * .7) {
+    x += -40 + Math.random() * 80;
+    y += 20 + Math.random() * 45;
+    lightningPoints.push({ x, y });
+  }
+}
+
+function drawWeather(delta, currentTime) {
+  weatherCtx.clearRect(0, 0, innerWidth, innerHeight);
+
+  const smoothing = 1 - Math.exp(-delta * 2);
+
+  for (const key of ["rain", "cloud", "wind"]) {
+    weatherSmooth[key] +=
+      (weatherState[key] - weatherSmooth[key]) * smoothing;
+  }
+
+  const clouds = weatherSmooth.cloud / 100;
+
+  if (clouds > .01) {
+    weatherCtx.fillStyle = `rgba(17, 26, 35, ${clouds * .25})`;
+    weatherCtx.fillRect(0, 0, innerWidth, innerHeight);
+
+    for (let i = 0; i < 7; i++) {
+      const x = (
+        i * innerWidth / 4 +
+        currentTime * weatherSmooth.wind * .3
+      ) % (innerWidth * 1.7) - innerWidth * .35;
+
+      const y = innerHeight * (.06 + (i % 3) * .055);
+      const radius = Math.max(innerWidth * .35, 220);
+
+      const cloud = weatherCtx.createRadialGradient(
+        x, y, 0,
+        x, y, radius
+      );
+
+      cloud.addColorStop(0, `rgba(120, 140, 155, ${clouds * .17})`);
+      cloud.addColorStop(.55, `rgba(57, 71, 87, ${clouds * .1})`);
+      cloud.addColorStop(1, "rgba(30, 40, 55, 0)");
+
+      weatherCtx.fillStyle = cloud;
+      weatherCtx.fillRect(0, 0, innerWidth, innerHeight);
+    }
+  }
+
+  const drops = Math.round(weatherSmooth.rain / 100 * rainDrops.length);
+
+  weatherCtx.strokeStyle = "#b8d6eb66";
+  weatherCtx.lineWidth = .8;
+  weatherCtx.beginPath();
+
+  for (let i = 0; i < drops; i++) {
+    const drop = rainDrops[i];
+
+    drop.x += weatherSmooth.wind * 3 * drop.depth * delta;
+    drop.y += (440 + 600 * drop.depth) * delta;
+
+    if (drop.y > innerHeight + 30) {
+      drop.y = -30;
+      drop.x = Math.random() * innerWidth;
+    }
+
+    if (drop.x < -60) drop.x = innerWidth + 40;
+    if (drop.x > innerWidth + 60) drop.x = -40;
+
+    weatherCtx.moveTo(drop.x, drop.y);
+    weatherCtx.lineTo(
+      drop.x + weatherSmooth.wind * .12,
+      drop.y + 18 * drop.depth
+    );
+  }
+
+  weatherCtx.stroke();
+
+  if (
+    weatherState.lightning &&
+    currentTime > nextLightning &&
+    !reducedMotion.matches
+  ) {
+    flash = 1;
+    createLightning();
+    nextLightning = currentTime + 8 + Math.random() * 10;
+  }
+
+  if (flash > 0) {
+    weatherCtx.fillStyle = `rgba(220, 235, 255, ${flash * .18})`;
+    weatherCtx.fillRect(0, 0, innerWidth, innerHeight);
+
+    weatherCtx.strokeStyle = `rgba(230, 245, 255, ${flash * .85})`;
+    weatherCtx.lineWidth = 1.6;
+    weatherCtx.beginPath();
+
+    lightningPoints.forEach((point, index) => {
+      if (index === 0) {
+        weatherCtx.moveTo(point.x, point.y);
+      } else {
+        weatherCtx.lineTo(point.x, point.y);
+      }
+    });
+
+    weatherCtx.stroke();
+    flash = Math.max(0, flash - delta * 2.8);
+  }
+}
+
+let weatherLast = performance.now();
+
+function weatherLoop(now) {
+  const delta = Math.min((now - weatherLast) / 1000, .05);
+  weatherLast = now;
+  drawWeather(delta, now / 1000);
+  requestAnimationFrame(weatherLoop);
+}
+
+requestAnimationFrame(weatherLoop);
+
+const weatherPanel = $("weather-panel");
+const weatherToggle = $("weather-toggle");
+
+weatherToggle.addEventListener("click", () => {
+  weatherPanel.hidden = !weatherPanel.hidden;
+});
+
+for (const key of ["rain", "cloud", "wind"]) {
+  $(key).addEventListener("input", event => {
+    weatherState[key] = Number(event.target.value);
+
+    $(key + "-out").textContent =
+      weatherState[key] + (key === "wind" ? "" : "%");
+  });
+}
+
+$("lightning").addEventListener("change", event => {
+  weatherState.lightning = event.target.checked;
+  nextLightning = performance.now() / 1000 + 3;
+});
+
+const presets = {
+  clear: { rain: 0, cloud: 0, wind: 5 },
+  rain: { rain: 55, cloud: 55, wind: 20 },
+  storm: { rain: 100, cloud: 90, wind: 75 }
+};
+
+document.querySelectorAll("[data-preset]").forEach(button => {
+  button.addEventListener("click", () => {
+    const preset = presets[button.dataset.preset];
+
+    for (const key of ["rain", "cloud", "wind"]) {
+      weatherState[key] = preset[key];
+      $(key).value = preset[key];
+      $(key + "-out").textContent =
+        preset[key] + (key === "wind" ? "" : "%");
+    }
+  });
+});
+
+$("open-weather").addEventListener("click", () => {
+  weatherPanel.hidden = false;
+  $("rain").focus();
+});
+
+/* Переход к Земле и галерея */
+
+const earth = $("earth");
+const space = $("space");
+const solarWorld = $("solar-world");
+const galleryDialog = $("gallery-dialog");
+
+earth.addEventListener("click", async () => {
+  earth.disabled = true;
+
+  const scale = reducedMotion.matches
+    ? 1
+    : Math.max(space.clientWidth, space.clientHeight) /
+      earth.offsetWidth * 1.25;
+
+  const earthX = earth.offsetLeft + earth.offsetWidth / 2;
+  const earthY = earth.offsetTop + earth.offsetHeight / 2;
+
+  const translateX = space.clientWidth / 2 - earthX * scale;
+  const translateY = space.clientHeight / 2 - earthY * scale;
+
+  if (!reducedMotion.matches) {
+    const animation = solarWorld.animate([
+      {
+        transform: "translate(0, 0) scale(1)"
+      },
+      {
+        transform: `translate(${translateX}px, ${translateY}px) scale(${scale})`
+      }
+    ], {
+      duration: 1900,
+      easing: "cubic-bezier(.65,0,.22,1)",
+      fill: "forwards"
+    });
+
+    try {
+      await animation.finished;
+    } catch {}
+  }
+
+  galleryDialog.showModal();
+});
+
+function closeGallery() {
+  galleryDialog.close();
+}
+
+$("close-gallery").addEventListener("click", closeGallery);
+$("return-space").addEventListener("click", closeGallery);
+
+galleryDialog.addEventListener("close", () => {
+  solarWorld.getAnimations().forEach(animation => animation.cancel());
+  earth.disabled = false;
+});
+
+/* Генерация картинок галереи */
+
+function seededRandom(seed) {
+  return () => {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
+}
+
+function createArtwork(type, seed) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 960;
+  canvas.height = 720;
+
+  const image = canvas.getContext("2d");
+  const random = seededRandom(seed);
+  const w = canvas.width;
+  const h = canvas.height;
+
+  const sky = image.createLinearGradient(0, 0, 0, h);
+
+  const palettes = {
+    supercell: ["#071320", "#526b79", "#b0bdba"],
+    lightning: ["#071020", "#344b62", "#a9c7d8"],
+    sunset: ["#172437", "#826779", "#efad78"],
+    rain: ["#0b1724", "#405e70", "#8fa7af"],
+    night: ["#02050d", "#101b31", "#354b61"],
+    clouds: ["#14202b", "#6c808d", "#bdc8ca"],
+    blue: ["#061421", "#164365", "#91cce3"],
+    gold: ["#241616", "#78514d", "#e6ae77"],
+    horizon: ["#111a21", "#586c76", "#e3a36d"],
+    moon: ["#03060d", "#1b2940", "#71849a"],
+    fog: ["#172128", "#718b8e", "#b6c4be"]
+  };
+
+  const colors = palettes[type] || palettes.supercell;
+
+  sky.addColorStop(0, colors[0]);
+  sky.addColorStop(.56, colors[1]);
+  sky.addColorStop(1, colors[2]);
+
+  image.fillStyle = sky;
+  image.fillRect(0, 0, w, h);
+
+  for (let layer = 0; layer < 9; layer++) {
+    const centerY = 130 + layer * 31;
+    const spread = 600 - layer * 40;
+
+    for (let i = 0; i < 74; i++) {
+      const x = w * .48 + (random() - .5) * spread * 2;
+      const y = centerY + (random() - .5) * 70;
+      const radius = 40 + random() * 100;
+
+      image.save();
+      image.translate(x, y);
+      image.scale(1.9, .56);
+
+      const cloud = image.createRadialGradient(
+        0, 0, 0,
+        0, 0, radius
+      );
+
+      const shade = Math.floor(28 + layer * 3 + random() * 17);
+
+      cloud.addColorStop(
+        0,
+        `rgba(${shade}, ${shade + 10}, ${shade + 20}, .78)`
+      );
+
+      cloud.addColorStop(
+        .62,
+        `rgba(${shade}, ${shade + 10}, ${shade + 20}, .38)`
+      );
+
+      cloud.addColorStop(1, "rgba(15,25,35,0)");
+
+      image.fillStyle = cloud;
+      image.fillRect(-radius, -radius, radius * 2, radius * 2);
+      image.restore();
+    }
+  }
+
+  if (type === "rain" || type === "supercell" || type === "blue") {
+    for (let i = 0; i < 900; i++) {
+      const x = random() * w;
+      const y = 300 + random() * 280;
+
+      image.strokeStyle = `rgba(180, 215, 225, ${.06 + random() * .16})`;
+      image.lineWidth = 1 + random() * 2;
+
+      image.beginPath();
+      image.moveTo(x, y);
+      image.lineTo(x - 35, y + 120 + random() * 160);
+      image.stroke();
+    }
+  }
+
+  if (type === "lightning") {
+    let x = 700;
+    let y = 260;
+
+    image.save();
+    image.shadowColor = "#c7e9ff";
+    image.shadowBlur = 28;
+    image.strokeStyle = "#eefaff";
+    image.lineWidth = 4;
+    image.beginPath();
+    image.moveTo(x, y);
+
+    while (y < 600) {
+      x += -35 + random() * 70;
+      y += 18 + random() * 32;
+      image.lineTo(x, y);
+    }
+
+    image.stroke();
+    image.restore();
+  }
+
+  if (type === "night" || type === "moon") {
+    image.fillStyle = "rgba(0, 5, 18, .38)";
+    image.fillRect(0, 0, w, h);
+
+    image.fillStyle = "#eee7c5";
+    image.shadowColor = "#fff1bd";
+    image.shadowBlur = 28;
+    image.beginPath();
+    image.arc(755, 135, 43, 0, Math.PI * 2);
+    image.fill();
+
+    image.shadowBlur = 0;
+    image.fillStyle = "#101a29";
+    image.beginPath();
+    image.arc(777, 119, 41, 0, Math.PI * 2);
+    image.fill();
+  }
+
+  if (type === "gold" || type === "sunset" || type === "horizon") {
+    const glow = image.createRadialGradient(
+      730, 470, 0,
+      730, 470, 380
+    );
+
+    glow.addColorStop(0, "rgba(255, 217, 148, .42)");
+    glow.addColorStop(.5, "rgba(255, 146, 91, .14)");
+    glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+    image.fillStyle = glow;
+    image.fillRect(0, 0, w, h);
+  }
+
+  if (type === "fog") {
+    for (let i = 0; i < 90; i++) {
+      const x = random() * w;
+      const y = 380 + random() * 220;
+      const radius = 40 + random() * 120;
+
+      const fog = image.createRadialGradient(
+        x, y, 0,
+        x, y, radius
+      );
+
+      fog.addColorStop(0, "rgba(220, 235, 227, .17)");
+      fog.addColorStop(1, "rgba(140, 170, 170, 0)");
+
+      image.fillStyle = fog;
+      image.beginPath();
+      image.arc(x, y, radius, 0, Math.PI * 2);
+      image.fill();
+    }
+  }
+
+  image.fillStyle = "rgba(7, 13, 17, .58)";
+  image.beginPath();
+  image.moveTo(0, 610);
+
+  for (let x = 0; x <= w; x += 20) {
+    image.lineTo(x, 615 + Math.sin(x * .01) * 8 + random() * 5);
+  }
+
+  image.lineTo(w, h);
+  image.lineTo(0, h);
+  image.closePath();
+  image.fill();
+
+  for (let i = 0; i < 15000; i++) {
+    image.fillStyle = random() > .5
+      ? "#ffffff06"
+      : "#00000008";
+
+    image.fillRect(
+      random() * w,
+      random() * h,
+      1.4,
+      1.4
+    );
+  }
+
+  const vignette = image.createRadialGradient(
+    480, 350, 140,
+    480, 350, 650
+  );
+
+  vignette.addColorStop(0, "#00000000");
+  vignette.addColorStop(1, "#0000009c");
+
+  image.fillStyle = vignette;
+  image.fillRect(0, 0, w, h);
+
+  return canvas.toDataURL("image/jpeg", .9);
+}
+
+const artworks = [
+  ["supercell", 41, "Перед фронтом", "Слоистое основание грозовой системы."],
+  ["lightning", 123, "Разряд", "Молния за дождевой завесой."],
+  ["sunset", 501, "Последний свет", "Тёплый горизонт перед грозой."],
+  ["rain", 777, "Дождевой фронт", "Плотные полосы осадков."],
+  ["night", 901, "Ночная облачность", "Тёмное небо перед дождём."],
+  ["clouds", 1204, "Рост облаков", "Развитие высокой облачности."],
+  ["blue", 1450, "Холодный фронт", "Синее свечение сквозь облака."],
+  ["gold", 1640, "Свет внутри шторма", "Тёплое свечение далёкого фронта."],
+  ["horizon", 2031, "Дальний фронт", "Грозовая система приближается."],
+  ["moon", 2488, "Луна за облаками", "Спокойная ночная атмосфера."],
+  ["fog", 3099, "Туман после дождя", "Мягкий влажный воздух после осадков."],
+  ["rain", 3412, "Тяжёлые капли", "Дождь усиливается перед фронтом."]
+];
+
+const gallery = $("gallery");
+
+artworks.forEach(([type, seed, title, description]) => {
+  const figure = document.createElement("figure");
+  const image = document.createElement("img");
+  const caption = document.createElement("figcaption");
+  const label = document.createElement("span");
+
+  label.className = "art-label";
+  label.textContent = "Художественная иллюстрация";
+
+  image.src = createArtwork(type, seed);
+  image.alt = description;
+  image.loading = "lazy";
+
+  caption.append(
+    label,
+    document.createTextNode(title + " — " + description)
+  );
+
+  figure.append(image, caption);
+  gallery.append(figure);
+});
+
+/* Спокойная процедурная музыка */
+
+let audioContext = null;
+let masterGain = null;
+let musicPlaying = false;
+
+function createAmbientMusic() {
+  const AudioContextClass =
+    window.AudioContext || window.webkitAudioContext;
+
+  if (!AudioContextClass) {
+    throw new Error("Браузер не поддерживает звук.");
+  }
+
+  audioContext = new AudioContextClass();
+  masterGain = audioContext.createGain();
+  masterGain.gain.value = 0;
+
+  const filter = audioContext.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.value = 1100;
+
+  masterGain.connect(filter);
+  filter.connect(audioContext.destination);
+
+  const notes = [146.83, 174.61, 220, 261.63, 329.63];
+
+  notes.forEach((frequency, index) => {
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.value = frequency;
+    oscillator.detune.value = (index - 2) * 2;
+    gain.gain.value = .045;
+
+    oscillator.connect(gain);
+    gain.connect(masterGain);
+
+    oscillator.start();
+  });
+}
+
+$("music-toggle").addEventListener("click", async () => {
+  if (!audioContext) {
+    createAmbientMusic();
+  }
+
+  if (!musicPlaying) {
+    await audioContext.resume();
+
+    const volume = Number($("music-volume").value) / 100 * .35;
+    const now = audioContext.currentTime;
+
+    masterGain.gain.cancelScheduledValues(now);
+    masterGain.gain.setValueAtTime(0, now);
+    masterGain.gain.linearRampToValueAtTime(volume, now + 2);
+
+    musicPlaying = true;
+    $("music-toggle").textContent = "Ⅱ Музыка";
+    document.querySelector(".music-dock").classList.add("playing");
+  } else {
+    const now = audioContext.currentTime;
+
+    masterGain.gain.cancelScheduledValues(now);
+    masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+    masterGain.gain.linearRampToValueAtTime(0, now + .7);
+
+    musicPlaying = false;
+    $("music-toggle").textContent = "♫ Музыка";
+    document.querySelector(".music-dock").classList.remove("playing");
+  }
+});
+
+$("music-volume").addEventListener("input", event => {
+  if (!audioContext || !musicPlaying) return;
+
+  const volume = Number(event.target.value) / 100 * .35;
+  masterGain.gain.setTargetAtTime(
+    volume,
+    audioContext.currentTime,
+    .15
+  );
+});
+</script>
+
+</body>
+</html>
